@@ -2,7 +2,6 @@
 #define SYSTEM_PARSER_H
 
 #include <chrono>
-#include <filesystem>
 #include <fstream>
 #include <regex>
 #include <string>
@@ -24,7 +23,6 @@ const std::string kPasswordPath{"/etc/passwd"};
 float MemoryUtilization();
 long UpTime();
 std::vector<int> Pids();
-std::vector<int> Old_Pids();
 int TotalProcesses();
 int RunningProcesses();
 std::string OperatingSystem();

@@ -9,6 +9,8 @@ using std::stof;
 using std::string;
 using std::to_string;
 using std::vector;
+
+#include <filesystem>
 namespace fs = std::filesystem;
 
 // DONE: An example of how to read data from the filesystem
@@ -63,24 +65,24 @@ vector<int> LinuxParser::Pids() {
   return pids;
 }
 // Original Solution
-vector<int> LinuxParser::Old_Pids() {
-  vector<int> pids;
-  DIR* directory = opendir(kProcDirectory.c_str());
-  struct dirent* file;
-  while ((file = readdir(directory)) != nullptr) {
-    // Is this a directory?
-    if (file->d_type == DT_DIR) {
-      // Is every character of the name a digit?
-      string filename(file->d_name);
-      if (std::all_of(filename.begin(), filename.end(), isdigit)) {
-        int pid = stoi(filename);
-        pids.push_back(pid);
-      }
-    }
-  }
-  closedir(directory);
-  return pids;
-}
+// vector<int> LinuxParser::Pids() {
+//   vector<int> pids;
+//   DIR* directory = opendir(kProcDirectory.c_str());
+//   struct dirent* file;
+//   while ((file = readdir(directory)) != nullptr) {
+//     // Is this a directory?
+//     if (file->d_type == DT_DIR) {
+//       // Is every character of the name a digit?
+//       string filename(file->d_name);
+//       if (std::all_of(filename.begin(), filename.end(), isdigit)) {
+//         int pid = stoi(filename);
+//         pids.push_back(pid);
+//       }
+//     }
+//   }
+//   closedir(directory);
+//   return pids;
+// }
 
 // TODO: Read and return the system memory utilization
 // I'm using the "Red Hat Enterprise Linux 7.1 or later" formula
