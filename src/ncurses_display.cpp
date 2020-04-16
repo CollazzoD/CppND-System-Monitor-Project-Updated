@@ -49,6 +49,23 @@ void NCursesDisplay::DisplaySystem(System& system, WINDOW* window) {
       ("Running Processes: " + to_string(system.RunningProcesses())).c_str());
   mvwprintw(window, ++row, 2,
             ("Up Time: " + Format::ElapsedTime(system.UpTime())).c_str());
+
+  int n_cpus = system.NCpus();
+  mvwprintw(window, ++row, 2, ("Total Cpus: " + to_string(n_cpus)).c_str());
+
+  row = 1;
+  int i = 1;
+  for (auto& cpu : system.Cpus()) {
+    std::string cpu_label = "CPU " + to_string(i) + ":";
+    mvwprintw(window, row, 75, cpu_label.c_str());
+    wattron(window, COLOR_PAIR(1));
+    mvwprintw(window, row, 83, "");
+    wprintw(window, ProgressBar(cpu.Utilization()).c_str());
+    wattroff(window, COLOR_PAIR(1));
+    row++;
+    i++;
+  }
+
   wrefresh(window);
 }
 
@@ -89,7 +106,13 @@ void NCursesDisplay::Display(System& system, int n) {
   start_color();  // enable color
 
   int x_max{getmaxx(stdscr)};
-  WINDOW* system_window = newwin(9, x_max - 1, 0, 0);
+
+  // Resize system_window so as to visualize every cpu
+  // The minimum number of rows inside the system_window that I'm
+  // displaying is 8
+  int sys_win_y_max = (8 > system.NCpus()) ? 8 : system.NCpus();
+  sys_win_y_max += 2;  // First and last row are for the box lines
+  WINDOW* system_window = newwin(10, x_max - 1, 0, 0);
   WINDOW* process_window =
       newwin(3 + n, x_max - 1, system_window->_maxy + 1, 0);
 
@@ -99,6 +122,9 @@ void NCursesDisplay::Display(System& system, int n) {
     box(system_window, 0, 0);
     box(process_window, 0, 0);
     DisplaySystem(system, system_window);
+    // reset process_window (avoid overlapping of different values)
+    process_window = newwin(3 + n, x_max - 1, system_window->_maxy + 1, 0);
+    box(process_window, 0, 0);
     DisplayProcesses(system.Processes(), process_window, n);
     wrefresh(system_window);
     wrefresh(process_window);

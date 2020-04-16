@@ -1,6 +1,8 @@
 #ifndef SYSTEM_PARSER_H
 #define SYSTEM_PARSER_H
 
+#include <chrono>
+#include <filesystem>
 #include <fstream>
 #include <regex>
 #include <string>
@@ -22,6 +24,7 @@ const std::string kPasswordPath{"/etc/passwd"};
 float MemoryUtilization();
 long UpTime();
 std::vector<int> Pids();
+std::vector<int> Old_Pids();
 int TotalProcesses();
 int RunningProcesses();
 std::string OperatingSystem();
@@ -41,6 +44,8 @@ enum CPUStates {
   kGuestNice_
 };
 std::vector<std::string> CpuUtilization();
+std::vector<std::string> MultiCpuUtilization(int);
+int CountCpus();
 long Jiffies();
 long ActiveJiffies();
 long ActiveJiffies(int pid);
@@ -52,6 +57,9 @@ std::string Ram(int pid);
 std::string Uid(int pid);
 std::string User(int pid);
 long int UpTime(int pid);
+
+//
+std::vector<long int> CpuUsage(int pid);
 };  // namespace LinuxParser
 
 #endif
